@@ -33,6 +33,5 @@ public class BasicInsertStrategy<T extends Entity> {
         }
 
         return serviceResult;
-
     }
 }

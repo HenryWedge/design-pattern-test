@@ -17,7 +17,7 @@ public class ReplaceInsultsValidationStrategy implements ContentValidationStrate
     private InsultFilterService insultFilterService;
 
     @Override
-    public Post validateContent(final Post post) throws ContentContainsInsultException {
+    public Post validateContent(final Post post) {
         if (insultChecker.isContentIncludingInsult(post.getContent())) {
             post.setContent(insultFilterService.filterInsult(post.getContent()));
         }

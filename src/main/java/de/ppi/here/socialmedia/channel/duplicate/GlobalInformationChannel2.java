@@ -12,6 +12,7 @@ import de.ppi.here.socialmedia.service.ContentLengthCheckStrategy;
 import de.ppi.here.socialmedia.service.InsultChecker;
 import de.ppi.here.socialmedia.service.RoleService;
 import de.ppi.here.socialmedia.service.notification.BasicNotificationService;
+import de.ppi.here.socialmedia.service.router.Router;
 import de.ppi.here.socialmedia.util.UserContext;
 
 @Service
@@ -29,6 +30,9 @@ public class GlobalInformationChannel2 implements ChannelBo {
     @Autowired
     private RoleService roleService;
 
+    @Autowired
+    private Router router;
+
     @Override
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
         throws NoWriteAccessRightsException, ContentTooLongException, ContentContainsInsultException {
@@ -44,6 +48,8 @@ public class GlobalInformationChannel2 implements ChannelBo {
         }
 
         postDao.save(post);
+
+        router.route("message/sent");
 
         notificationService.notifySubscribersOfChannel(channelId);
     }

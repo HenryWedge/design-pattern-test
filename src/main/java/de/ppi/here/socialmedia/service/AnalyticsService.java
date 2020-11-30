@@ -3,8 +3,7 @@ package de.ppi.here.socialmedia.service;
 import org.springframework.stereotype.Service;
 
 @Service
-public interface InsultChecker  {
+public interface AnalyticsService {
 
-    boolean isContentIncludingInsult(String content);
+    void sendContentToAnalyticsCompany(String content);
 }
-

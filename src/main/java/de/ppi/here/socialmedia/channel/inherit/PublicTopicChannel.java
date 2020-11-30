@@ -1,5 +1,6 @@
 package de.ppi.here.socialmedia.channel.inherit;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.socialmedia.bo.Post;
 import de.ppi.here.socialmedia.service.ContentLengthCheckStrategy;
@@ -7,9 +8,12 @@ import de.ppi.here.socialmedia.service.InsultChecker;
 import de.ppi.here.socialmedia.service.InsultFilterService;
 
 @Service
-public class PublicTopicChannel extends AbstractPublicChannelBo {
+public class PublicTopicChannel extends AbstractPublicChannel {
 
+    @Autowired
     private InsultFilterService insultFilterService;
+
+    @Autowired
     private InsultChecker insultChecker;
 
     @Override

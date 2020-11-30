@@ -14,7 +14,7 @@ import de.ppi.here.socialmedia.service.router.Router;
 import de.ppi.here.socialmedia.util.UserContext;
 
 
-public abstract class AbstractChannelBo implements ChannelBo {
+public abstract class AbstractChannel implements ChannelBo {
 
     @Autowired
     private PostDao postDao;

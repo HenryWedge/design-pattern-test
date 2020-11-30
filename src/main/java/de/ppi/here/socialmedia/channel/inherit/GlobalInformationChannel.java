@@ -9,7 +9,7 @@ import de.ppi.here.socialmedia.service.InsultChecker;
 import de.ppi.here.socialmedia.service.RoleService;
 
 @Service
-public class GlobalInformationChannel extends AbstractPublicChannelBo {
+public class GlobalInformationChannel extends AbstractPublicChannel {
 
     @Autowired
     private InsultChecker insultChecker;
