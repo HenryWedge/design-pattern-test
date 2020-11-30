@@ -2,6 +2,7 @@ package de.ppi.here.tcu.composite.inserter;
 
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.entity.Operator;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
 import de.ppi.here.tcu.changeData.ChangeRecord;
@@ -16,6 +17,7 @@ import de.ppi.here.tcu.service.OperatorInfrastructureService;
 /**
  * Einfüge-Ablauf für einen Betreiber
  */
+@Service
 public class OperatorInserter implements Inserter<Operator> {
 
     @Autowired

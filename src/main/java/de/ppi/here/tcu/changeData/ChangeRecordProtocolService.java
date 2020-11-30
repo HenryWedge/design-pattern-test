@@ -11,6 +11,7 @@ import de.ppi.here.tcu.result.DialogUserIdInformation;
  *
  * @param <T>
  */
+@Service
 public interface ChangeRecordProtocolService<T extends Entity> {
     ChangeRecord createAndPersistCreationChangeRecord(final T businessObject,
         final List<ChangeData> diffWrapperList, final DialogUserIdInformation dialogUserIdInformation,

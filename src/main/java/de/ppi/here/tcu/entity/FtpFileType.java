@@ -12,8 +12,11 @@ public class FtpFileType implements Entity {
 
     private Integer techId;
 
+    public FtpFileType() {
+    }
+
     public FtpFileType(final String operatorId, final String mandatorId, final String orderDirection,
-        final String ftpFileType, final Integer techId) {
+                       final String ftpFileType, final Integer techId) {
         this.operatorId = operatorId;
         this.mandatorId = mandatorId;
         this.orderDirection = orderDirection;

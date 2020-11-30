@@ -4,8 +4,18 @@ import java.util.Optional;
 
 public interface Dao<T> {
 
+    /**
+     * Findet eine Entität anhand seiner Id
+     * @param id Id des Objektes
+     * @return Entität
+     */
     Optional<T> findById(Integer id);
 
-    T makePersistent(final T businessObject);
+    /**
+     * Persistiert eine Entität in der Datenbank
+     * @param entity Einzufügende Entität
+     * @return Eingefügte Entität
+     */
+    T makePersistent(final T entity);
 
 }

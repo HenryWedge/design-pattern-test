@@ -2,19 +2,18 @@ package de.ppi.here.tcu.adminservice.composite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy2;
+import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
 import de.ppi.here.tcu.composite.inserter.BasicInserter;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.FtpApplicationGroupDao;
 import de.ppi.here.tcu.entity.FtpApplicationGroup;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.FtpApplicationGroupValidator;
 
 
@@ -43,7 +42,7 @@ public class FtpApplicationGroupAdministrationService3 implements Administration
     private ChangeDataIterator<FtpApplicationGroup> changeDataIterator;
 
     @Autowired
-    private BasicInsertStrategy2<FtpApplicationGroup> basicInsertStrategy2;
+    private BasicInsertStrategy<FtpApplicationGroup> basicInsertStrategy;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpApplicationGroup businessObject,
@@ -52,7 +51,7 @@ public class FtpApplicationGroupAdministrationService3 implements Administration
         final BasicInserter<FtpApplicationGroup> inserter =
             new BasicInserter<>(changeRecordProtocolService, administrationProtocolEventService, dao,
                 changeDataIterator, new FtpApplicationGroup(), "FTPAPPLICATIONGROUP_MESSAGES_CREATED");
-        return basicInsertStrategy2.insert(businessObject, dialogUserIdInformation, validator,
+        return basicInsertStrategy.insert(businessObject, dialogUserIdInformation, validator,
             ftpApplicationGroupDao, inserter);
     }
 }

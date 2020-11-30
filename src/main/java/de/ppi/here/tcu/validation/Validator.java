@@ -1,13 +1,13 @@
 package de.ppi.here.tcu.validation;
 
 import java.util.List;
-import de.ppi.here.demo.validation.ConstraintViolationException;
-import de.ppi.here.demo.validation.ValidationContext;
 import de.ppi.here.tcu.entity.Entity;
 import de.ppi.here.tcu.result.ValidationInformation;
 
+
 /**
  * Validator für Entitäten
+ *
  * @param <T>
  */
 public interface Validator<T extends Entity> {

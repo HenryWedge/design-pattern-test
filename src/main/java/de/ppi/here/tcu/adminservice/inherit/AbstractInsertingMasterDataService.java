@@ -3,7 +3,6 @@ package de.ppi.here.tcu.adminservice.inherit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.entity.Entity;
 import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
@@ -11,6 +10,7 @@ import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 
 /**
  * Abstrakter Service zum Einfügen einer Entität in die Datenbank
@@ -22,7 +22,7 @@ public abstract class AbstractInsertingMasterDataService<T extends Entity>
 
     public final MasterDataAdministrationOperationSuccessServiceResult insert(T businessObject,
         DialogUserIdInformation dialogUserIdInformation)
-        throws DuplicateEntityException, PreconditionNotFulfilledException {
+            throws DuplicateEntityException, PreconditionNotFulfilledException, ConstraintViolationException {
 
         checkInsertPreconditions(businessObject);
 

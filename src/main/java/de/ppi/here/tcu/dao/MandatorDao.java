@@ -1,11 +1,13 @@
 package de.ppi.here.tcu.dao;
 
 import java.util.Optional;
+import org.springframework.stereotype.Repository;
 import de.ppi.here.tcu.entity.Mandator;
 
 /**
  * Datenbankzugriffsobjekt für die Mandator-Entität
  */
+@Repository
 public class MandatorDao implements Dao<Mandator> {
 
     @Override
@@ -14,7 +16,7 @@ public class MandatorDao implements Dao<Mandator> {
     }
 
     @Override
-    public Mandator makePersistent(final Mandator businessObject) {
-        return null;
+    public Mandator makePersistent(final Mandator entity) {
+        return entity;
     }
 }

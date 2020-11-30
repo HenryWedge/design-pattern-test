@@ -3,9 +3,8 @@ package de.ppi.here.tcu.adminservice.composite;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy2;
+import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
 import de.ppi.here.tcu.composite.inserter.MandatorInserter;
 import de.ppi.here.tcu.composite.precondition.DefaultMandatorCheckService;
 import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
@@ -16,6 +15,7 @@ import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.MandatorValidator;
 
 /**
@@ -40,7 +40,7 @@ public class MandatorAdministrationService3 implements AdministrationService<Man
     private MandatorUppercasePreparationService mandatorUppercasePreparationService;
 
     @Autowired
-    private BasicInsertStrategy2<Mandator> basicInsertStrategy;
+    private BasicInsertStrategy<Mandator> basicInsertStrategy;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(Mandator businessObject,

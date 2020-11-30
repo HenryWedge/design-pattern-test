@@ -7,8 +7,6 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import de.ppi.here.demo.validation.CommonValidationContext;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
@@ -21,8 +19,9 @@ import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceRes
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
 import de.ppi.here.tcu.service.OperatorInfrastructureService;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.OperatorValidator;
-
+import de.ppi.here.tcu.validation.ValidationContext;
 
 /**
  * Service zum Einfügen einer Betreiber-Entität in die Datenbank
@@ -100,6 +99,6 @@ public class OperatorAdministrationService extends AbstractInsertingMasterDataSe
     @Override
     protected List<ValidationInformation> validateForInsert(final Operator businessObject,
         final DialogUserIdInformation dialogUserIdInformation) throws ConstraintViolationException {
-        return operatorValidator.validate(businessObject, CommonValidationContext.createInsert());
+        return operatorValidator.validate(businessObject, ValidationContext.createInsert());
     }
 }

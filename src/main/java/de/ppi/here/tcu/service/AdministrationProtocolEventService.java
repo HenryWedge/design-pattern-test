@@ -1,10 +1,12 @@
 package de.ppi.here.tcu.service;
 
+import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 
 /**
  * Sendet Protokoll-Events nachdem eine Einfüge-Operation erfolgreich abgeschlossen wurde.
  */
+@Service
 public interface AdministrationProtocolEventService {
 
     /**

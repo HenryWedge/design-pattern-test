@@ -2,14 +2,12 @@ package de.ppi.here.tcu.adminservice.composite;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy2;
+import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
 import de.ppi.here.tcu.changeData.ChangeDataIteratorImpl;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
 import de.ppi.here.tcu.composite.inserter.BasicInserter;
 import de.ppi.here.tcu.composite.inserter.FtpApplicationInserter;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.FtpApplicationDao;
 import de.ppi.here.tcu.dao.FtpApplicationGroupDao;
 import de.ppi.here.tcu.entity.FtpApplication;
@@ -17,6 +15,7 @@ import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.FtpApplicationValidator;
 
 
@@ -42,7 +41,7 @@ public class FtpApplicationAdministrationService3 implements AdministrationServi
     private FtpApplicationDao ftpApplicationDao;
 
     @Autowired
-    private BasicInsertStrategy2<FtpApplication> basicInsertStrategy;
+    private BasicInsertStrategy<FtpApplication> basicInsertStrategy;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpApplication businessObject,

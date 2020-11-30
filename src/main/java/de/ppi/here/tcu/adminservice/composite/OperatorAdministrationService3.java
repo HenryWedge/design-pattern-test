@@ -3,22 +3,18 @@ package de.ppi.here.tcu.adminservice.composite;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import de.ppi.here.demo.validation.ConstraintViolationException;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy2;
-import de.ppi.here.tcu.composite.inserter.Inserter;
+import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
 import de.ppi.here.tcu.composite.inserter.OperatorInserter;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.composite.prepare.OperatorUppercasePreparationService;
-import de.ppi.here.tcu.dao.Dao;
 import de.ppi.here.tcu.dao.OperatorDao;
 import de.ppi.here.tcu.entity.Operator;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
+import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.OperatorValidator;
-import de.ppi.here.tcu.validation.Validator;
 
 
 /**
@@ -40,12 +36,12 @@ public class OperatorAdministrationService3 implements AdministrationService<Ope
     private OperatorUppercasePreparationService preparationService;
 
     @Autowired
-    private BasicInsertStrategy2<Operator> basicInsertStrategy;
+    private BasicInsertStrategy<Operator> basicInsertStrategy;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(final Operator businessObject,
         final DialogUserIdInformation dialogUserIdInformation)
-            throws DuplicateEntityException, ConstraintViolationException {
+        throws DuplicateEntityException, ConstraintViolationException {
 
         final List<ValidationInformation> validationInformations =
             preparationService.prepareInsert(businessObject);
