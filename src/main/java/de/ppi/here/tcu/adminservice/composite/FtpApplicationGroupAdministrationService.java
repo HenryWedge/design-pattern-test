@@ -21,7 +21,7 @@ import de.ppi.here.tcu.validation.FtpApplicationGroupValidator;
  * Service zum Einfügen einer FtpApplicationGroup-Entität in die Datenbank
  */
 @Service
-public class FtpApplicationGroupAdministrationService3 implements AdministrationService<FtpApplicationGroup> {
+public class FtpApplicationGroupAdministrationService implements AdministrationService<FtpApplicationGroup> {
 
     @Autowired
     private FtpApplicationGroupValidator validator;

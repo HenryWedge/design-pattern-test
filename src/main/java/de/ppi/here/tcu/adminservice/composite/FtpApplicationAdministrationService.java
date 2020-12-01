@@ -23,7 +23,7 @@ import de.ppi.here.tcu.validation.FtpApplicationValidator;
  * Service zum Einfügen einer FtpApplication-Entität in die Datenbank
  */
 @Service
-public class FtpApplicationAdministrationService3 implements AdministrationService<FtpApplication> {
+public class FtpApplicationAdministrationService implements AdministrationService<FtpApplication> {
 
     @Autowired
     private ChangeRecordProtocolService<FtpApplication> changeDataProtocolService;

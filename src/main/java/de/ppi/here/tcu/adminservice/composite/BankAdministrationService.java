@@ -21,7 +21,7 @@ import de.ppi.here.tcu.validation.ConstraintViolationException;
  * Service zum Einfügen einer Bank-Entität in die Datenbank
  */
 @Service
-public class BankAdministrationService3 implements AdministrationService<Bank> {
+public class BankAdministrationService implements AdministrationService<Bank> {
 
     @Autowired
     private ChangeRecordProtocolService<Bank> changeDataProtocolService;

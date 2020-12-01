@@ -22,7 +22,7 @@ import de.ppi.here.tcu.validation.MandatorValidator;
  * Service zum Einfügen einer Manstaten-Entität in die Datenbank
  */
 @Service
-public class MandatorAdministrationService3 implements AdministrationService<Mandator> {
+public class MandatorAdministrationService implements AdministrationService<Mandator> {
 
     @Autowired
     private MandatorInserter inserter;

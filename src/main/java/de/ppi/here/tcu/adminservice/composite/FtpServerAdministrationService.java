@@ -22,7 +22,7 @@ import de.ppi.here.tcu.validation.FtpServerValidator;
  * Service zum Einfügen einer FtpServer-Entität in die Datenbank
  */
 @Service
-public class FtpServerAdministrationService3 implements AdministrationService<FtpServer> {
+public class FtpServerAdministrationService implements AdministrationService<FtpServer> {
 
     @Autowired
     private FtpServerValidator ftpServerValidator;
