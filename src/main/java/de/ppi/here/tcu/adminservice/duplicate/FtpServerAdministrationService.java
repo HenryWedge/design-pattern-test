@@ -8,60 +8,61 @@ import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.dao.BankDao;
-import de.ppi.here.tcu.entity.Bank;
+import de.ppi.here.tcu.dao.FtpServerDao;
+import de.ppi.here.tcu.entity.FtpServer;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
-import de.ppi.here.tcu.validation.BankValidator;
 import de.ppi.here.tcu.validation.ConstraintViolationException;
+import de.ppi.here.tcu.validation.FtpServerValidator;
 import de.ppi.here.tcu.validation.ValidationContext;
 
 
 /**
- * Service zum Einfügen einer Bank-Entität in die Datenbank
+ * Service zum Einfügen einer FtpServer-Entität in die Datenbank
  */
 @Service
-public class BankAdministrationService2 implements AdministrationService<Bank> {
+public class FtpServerAdministrationService implements AdministrationService<FtpServer> {
 
     @Autowired
-    private BankValidator bankValidator;
+    private FtpServerValidator validator;
 
     @Autowired
-    private BankDao bankDao;
+    private FtpServerDao ftpServerDao;
 
     @Autowired
-    private ChangeDataIterator<Bank> bankChangeDataIterator;
+    private ChangeDataIterator<FtpServer> changeDataIterator;
 
     @Autowired
-    private ChangeRecordProtocolService<Bank> changeRecordProtocolService;
+    private ChangeRecordProtocolService<FtpServer> changeRecordProtocolService;
 
     @Autowired
     private AdministrationProtocolEventService administrationProtocolEventService;
 
-    public final MasterDataAdministrationOperationSuccessServiceResult insert(Bank businessObject,
-        DialogUserIdInformation dialogUserIdInformation)
+    @Override
+    public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpServer businessObject,
+        final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
 
         final List<ValidationInformation> validationInformations =
-            bankValidator.validate(businessObject, ValidationContext.createInsert());
+            validator.validate(businessObject, ValidationContext.createInsert());
 
-        if (bankDao.findById(businessObject.getId()).isPresent()) {
-            throw new DuplicateEntityException(businessObject);
-        }
+        ftpServerDao.findById(businessObject.getId())
+            .orElseThrow(() -> new DuplicateEntityException(businessObject));
 
-        final Bank persistent = bankDao.makePersistent(businessObject);
+        final FtpServer persistent = ftpServerDao.makePersistent(businessObject);
 
-        final List<ChangeData> diffList = bankChangeDataIterator.getDiffDataSet(new Bank(), persistent);
+        final List<ChangeData> diffWrapperList = changeDataIterator.getDiffDataSet(new FtpServer(), persistent);
 
-        final ChangeRecord changeRecordBean = changeRecordProtocolService
-            .createAndPersistCreationChangeRecord(businessObject, diffList, dialogUserIdInformation, null, false);
+        final ChangeRecord changeRecordBean = changeRecordProtocolService.createAndPersistCreationChangeRecord(
+            businessObject, diffWrapperList, dialogUserIdInformation, null, false);
+
         administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            new MasterDataAdministrationOperationSuccessServiceResult("BANK_MESSAGES_CREATED");
+            new MasterDataAdministrationOperationSuccessServiceResult("FTPSERVER_MESSAGES_CREATED");
 
         for (final ValidationInformation information : validationInformations) {
             serviceResult.addSubServiceResult(information);
@@ -69,5 +70,4 @@ public class BankAdministrationService2 implements AdministrationService<Bank> {
 
         return serviceResult;
     }
-
 }

@@ -1,14 +1,14 @@
-package de.ppi.here.tcu.adminservice.inherit;
+package de.ppi.here.tcu.adminservice.duplicate;
 
 import static de.ppi.here.tcu.util.StringUtil.containsLowerCase;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
@@ -17,6 +17,7 @@ import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.MandatorDao;
 import de.ppi.here.tcu.entity.Mandator;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
+import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AddInfoDataPersistenceService;
@@ -33,7 +34,7 @@ import de.ppi.here.tcu.validation.ValidationContext;
  * Service zum Einfügen einer Mandanten-Entität in die Datenbank
  */
 @Service
-public class MandatorAdministrationService extends AbstractInsertingMasterDataService<Mandator> {
+public class MandatorAdministrationService implements AdministrationService<Mandator> {
 
     @Autowired
     private MandatorDao mandatorDao;
@@ -63,8 +64,10 @@ public class MandatorAdministrationService extends AbstractInsertingMasterDataSe
     private MandatorInfrastructureService mandatorInfrastructureService;
 
     @Override
-    protected void checkInsertPreconditions(final Mandator businessObject)
-        throws PreconditionNotFulfilledException {
+    public MasterDataAdministrationOperationSuccessServiceResult insert(final Mandator businessObject,
+        final DialogUserIdInformation dialogUserIdInformation) throws DuplicateEntityException,
+        PreconditionNotFulfilledException, ConstraintViolationException, ConstraintViolationException {
+
         final String defaultMandatorId =
             configParameterService.getDefaultMandatorId(businessObject.getOperatorId());
         if (!StringUtils.isEmpty(defaultMandatorId)) {
@@ -73,40 +76,22 @@ public class MandatorAdministrationService extends AbstractInsertingMasterDataSe
                     "MANDATOR_BUSINESS_ERRORS_DEFAULT_MANDATOR_NOT_EXISTS - " + defaultMandatorId
                         + businessObject.getId()));
         }
-    }
 
-
-    @Override
-    protected List<ValidationInformation> validateForInsert(final Mandator businessObject,
-        final DialogUserIdInformation dialogUserIdInformation) throws ConstraintViolationException {
-        return mandatorValidator.validate(businessObject, ValidationContext.createMandatorInsert());
-    }
-
-
-    @Override
-    protected List<ValidationInformation> prepareForInsert(final Mandator businessObject) {
-        final List<ValidationInformation> result = new ArrayList<>();
+        final List<ValidationInformation> validationInformations = new ArrayList<>();
 
         // Beim Einfügen ggf. alles in Großbuchstaben umwandeln
         if (!StringUtils.isEmpty(businessObject.getId()) && containsLowerCase(businessObject.getMandatorId())) {
             businessObject.setMandatorId(businessObject.getMandatorId().toUpperCase());
 
-            result.add(new ValidationInformation("COMMON_MESSAGES_CHANGE_FROM_LOWER_TO_UPPERCASE"));
+            validationInformations
+                .add(new ValidationInformation("COMMON_MESSAGES_CHANGE_FROM_LOWER_TO_UPPERCASE"));
         }
 
-        return result;
-    }
+        validationInformations
+            .addAll(mandatorValidator.validate(businessObject, ValidationContext.createMandatorInsert()));
 
-
-    @Override
-    protected Optional<Mandator> getBeanFromDatabaseForCreation(final Mandator businessObject) {
-        return mandatorDao.findById(businessObject.getId());
-    }
-
-
-    @Override
-    protected MasterDataAdministrationOperationSuccessServiceResult internalInsert(final Mandator businessObject,
-        final DialogUserIdInformation dialogUserIdInformation) {
+        mandatorDao.findById(businessObject.getId())
+            .orElseThrow(() -> new DuplicateEntityException(businessObject));
 
         final Mandator persistent = mandatorDao.makePersistent(businessObject);
 
@@ -122,15 +107,22 @@ public class MandatorAdministrationService extends AbstractInsertingMasterDataSe
             otherChangeRecordProtocolService.createAndPersistCreationChangeRecord(persistent, diffWrapperList,
                 dialogUserIdInformation, null, false);
 
+        administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
+
         addInfoDataPersistenceService.persistAddInfoToBusinessObject(businessObject.getAddInfoFieldList(),
             businessObject);
-
-        administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
 
         mandatorInfrastructureService.createMandatorInfrastructureWithOrderTypeInheritance(businessObject,
             changeRecordBean.getId());
 
-        return new MasterDataAdministrationOperationSuccessServiceResult("MANDATOR_MESSAGES_CREATED");
+        final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
+            new MasterDataAdministrationOperationSuccessServiceResult("MANDATOR_MESSAGES_CREATED");
 
+        for (final ValidationInformation information : validationInformations) {
+            serviceResult.addSubServiceResult(information);
+        }
+
+        return serviceResult;
     }
+
 }

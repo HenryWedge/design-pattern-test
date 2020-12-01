@@ -8,61 +8,62 @@ import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.dao.FtpServerDao;
-import de.ppi.here.tcu.entity.FtpServer;
+import de.ppi.here.tcu.dao.FtpApplicationGroupDao;
+import de.ppi.here.tcu.entity.FtpApplicationGroup;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
 import de.ppi.here.tcu.validation.ConstraintViolationException;
-import de.ppi.here.tcu.validation.FtpServerValidator;
+import de.ppi.here.tcu.validation.FtpApplicationGroupValidator;
 import de.ppi.here.tcu.validation.ValidationContext;
 
 
 /**
- * Service zum Einfügen einer FtpServer-Entität in die Datenbank
+ * Service zum Einfügen einer FtpApplicationGroup-Entität in die Datenbank
  */
 @Service
-public class FtpServerAdministrationService2 implements AdministrationService<FtpServer> {
+public class FtpApplicationGroupAdministrationService implements AdministrationService<FtpApplicationGroup> {
 
     @Autowired
-    private FtpServerValidator validator;
+    private FtpApplicationGroupValidator ftpApplicationGroupValidator;
 
     @Autowired
-    private FtpServerDao ftpServerDao;
+    private FtpApplicationGroupDao ftpApplicationGroupDao;
 
     @Autowired
-    private ChangeDataIterator<FtpServer> changeDataIterator;
+    private ChangeDataIterator<FtpApplicationGroup> changeDataIterator;
 
     @Autowired
-    private ChangeRecordProtocolService<FtpServer> changeRecordProtocolService;
+    private ChangeRecordProtocolService<FtpApplicationGroup> changeRecordProtocolService;
 
     @Autowired
     private AdministrationProtocolEventService administrationProtocolEventService;
 
     @Override
-    public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpServer businessObject,
+    public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpApplicationGroup businessObject,
         final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
 
         final List<ValidationInformation> validationInformations =
-            validator.validate(businessObject, ValidationContext.createInsert());
+            ftpApplicationGroupValidator.validate(businessObject, ValidationContext.createInsert());
 
-        ftpServerDao.findById(businessObject.getId())
+        ftpApplicationGroupDao.findById(businessObject.getId())
             .orElseThrow(() -> new DuplicateEntityException(businessObject));
 
-        final FtpServer persistent = ftpServerDao.makePersistent(businessObject);
+        final FtpApplicationGroup persistent = ftpApplicationGroupDao.makePersistent(businessObject);
 
-        final List<ChangeData> diffWrapperList = changeDataIterator.getDiffDataSet(new FtpServer(), persistent);
+        final List<ChangeData> diffWrapperList =
+            changeDataIterator.getDiffDataSet(new FtpApplicationGroup(), persistent);
 
         final ChangeRecord changeRecordBean = changeRecordProtocolService.createAndPersistCreationChangeRecord(
             businessObject, diffWrapperList, dialogUserIdInformation, null, false);
 
         administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
 
-        final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            new MasterDataAdministrationOperationSuccessServiceResult("FTPSERVER_MESSAGES_CREATED");
+        MasterDataAdministrationOperationSuccessServiceResult serviceResult =
+            new MasterDataAdministrationOperationSuccessServiceResult("FTPAPPLICATIONGROUP_MESSAGES_CREATED");
 
         for (final ValidationInformation information : validationInformations) {
             serviceResult.addSubServiceResult(information);

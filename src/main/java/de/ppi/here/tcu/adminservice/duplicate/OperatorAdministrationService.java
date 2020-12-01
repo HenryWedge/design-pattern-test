@@ -29,7 +29,7 @@ import de.ppi.here.tcu.validation.ValidationContext;
  * Service zum Einfügen einer Betreiber-Entität in die Datenbank
  */
 @Service
-public class OperatorAdministrationService2 implements AdministrationService<Operator> {
+public class OperatorAdministrationService implements AdministrationService<Operator> {
 
     @Autowired
     private OperatorValidator operatorValidator;

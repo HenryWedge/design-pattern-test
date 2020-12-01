@@ -1,10 +1,9 @@
-package de.ppi.here.tcu.adminservice.inherit;
+package de.ppi.here.tcu.adminservice.duplicate;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
@@ -14,6 +13,7 @@ import de.ppi.here.tcu.dao.FtpApplicationGroupDao;
 import de.ppi.here.tcu.entity.FtpApplication;
 import de.ppi.here.tcu.entity.FtpApplicationGroup;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
+import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
@@ -23,10 +23,10 @@ import de.ppi.here.tcu.validation.ValidationContext;
 
 
 /**
- * Service zum Einfügen einer FtpApplicationGroup-Entität in die Datenbank
+ * Service zum Einfügen einer FtpApplication-Entität in die Datenbank
  */
 @Service
-public class FtpApplicationService extends AbstractInsertingMasterDataService<FtpApplication> {
+public class FtpApplicationAdministrationService implements AdministrationService<FtpApplication> {
 
     @Autowired
     private FtpApplicationValidator ftpApplicationValidator;
@@ -35,26 +35,28 @@ public class FtpApplicationService extends AbstractInsertingMasterDataService<Ft
     private FtpApplicationDao ftpApplicationDao;
 
     @Autowired
-    private AdministrationProtocolEventService administrationProtocolEventService;
-
-    @Autowired
-    private ChangeRecordProtocolService<FtpApplication> changeRecordProtocolService;
-
-    @Autowired
     private FtpApplicationGroupDao ftpApplicationGroupDao;
+
+    @Autowired
+    private AdministrationProtocolEventService administrationProtocolEventService;
 
     @Autowired
     private ChangeDataIterator<FtpApplication> changeDataIterator;
 
-    @Override
-    protected List<ValidationInformation> prepareForInsert(final FtpApplication businessObject) {
-        return Collections.emptyList();
-    }
-
+    @Autowired
+    private ChangeRecordProtocolService<FtpApplication> changeRecordProtocolService;
 
     @Override
-    protected MasterDataAdministrationOperationSuccessServiceResult internalInsert(
-        final FtpApplication businessObject, final DialogUserIdInformation dialogUserIdInformation) {
+    public MasterDataAdministrationOperationSuccessServiceResult insert(final FtpApplication businessObject,
+        final DialogUserIdInformation dialogUserIdInformation)
+        throws DuplicateEntityException, ConstraintViolationException {
+
+        final List<ValidationInformation> validationInformations =
+            ftpApplicationValidator.validate(businessObject, ValidationContext.createInsert());
+
+        if (ftpApplicationDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final FtpApplicationGroup group = ftpApplicationGroupDao.findByGroupName(businessObject.getOperatorId(),
             businessObject.getMandatorId(), businessObject.getGroupName());
@@ -71,25 +73,13 @@ public class FtpApplicationService extends AbstractInsertingMasterDataService<Ft
 
         administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
 
-        return new MasterDataAdministrationOperationSuccessServiceResult("FTPAPPLICATION_MESSAGES_CREATED");
-    }
+        final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
+            new MasterDataAdministrationOperationSuccessServiceResult("FTPAPPLICATION_MESSAGES_CREATED");
 
+        for (final ValidationInformation information : validationInformations) {
+            serviceResult.addSubServiceResult(information);
+        }
 
-    @Override
-    protected List<ValidationInformation> validateForInsert(final FtpApplication businessObject,
-        final DialogUserIdInformation dialogUserIdInformation) throws ConstraintViolationException {
-        return ftpApplicationValidator.validate(businessObject, ValidationContext.createInsert());
-    }
-
-
-    @Override
-    protected Optional<FtpApplication> getBeanFromDatabaseForCreation(final FtpApplication businessObject) {
-        return ftpApplicationDao.findById(businessObject.getId());
-    }
-
-
-    @Override
-    protected void checkInsertPreconditions(final FtpApplication businessObject) {
-        // nichts tun
+        return serviceResult;
     }
 }

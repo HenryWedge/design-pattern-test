@@ -1,10 +1,9 @@
-package de.ppi.here.tcu.adminservice.inherit;
+package de.ppi.here.tcu.adminservice.duplicate;
 
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
@@ -12,6 +11,7 @@ import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
 import de.ppi.here.tcu.dao.BankDao;
 import de.ppi.here.tcu.entity.Bank;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
+import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
 import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
@@ -24,7 +24,7 @@ import de.ppi.here.tcu.validation.ValidationContext;
  * Service zum Einfügen einer Bank-Entität in die Datenbank
  */
 @Service
-public class BankAdministrationService extends AbstractInsertingMasterDataService<Bank> {
+public class BankAdministrationService implements AdministrationService<Bank> {
 
     @Autowired
     private BankValidator bankValidator;
@@ -33,7 +33,7 @@ public class BankAdministrationService extends AbstractInsertingMasterDataServic
     private BankDao bankDao;
 
     @Autowired
-    private ChangeDataIterator<Bank> changeDataIterator;
+    private ChangeDataIterator<Bank> bankChangeDataIterator;
 
     @Autowired
     private ChangeRecordProtocolService<Bank> changeRecordProtocolService;
@@ -41,44 +41,33 @@ public class BankAdministrationService extends AbstractInsertingMasterDataServic
     @Autowired
     private AdministrationProtocolEventService administrationProtocolEventService;
 
-    @Override
-    protected void checkInsertPreconditions(final Bank businessObject) {
-        // Nichts zu prüfen
-    }
+    public final MasterDataAdministrationOperationSuccessServiceResult insert(Bank businessObject,
+        DialogUserIdInformation dialogUserIdInformation)
+        throws DuplicateEntityException, ConstraintViolationException {
 
+        final List<ValidationInformation> validationInformations =
+            bankValidator.validate(businessObject, ValidationContext.createInsert());
 
-    @Override
-    protected MasterDataAdministrationOperationSuccessServiceResult internalInsert(final Bank businessObject,
-        final DialogUserIdInformation dialogUserIdInformation) {
+        if (bankDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final Bank persistent = bankDao.makePersistent(businessObject);
 
-        final List<ChangeData> diffList = changeDataIterator.getDiffDataSet(new Bank(), persistent);
+        final List<ChangeData> diffList = bankChangeDataIterator.getDiffDataSet(new Bank(), persistent);
 
         final ChangeRecord changeRecordBean = changeRecordProtocolService
             .createAndPersistCreationChangeRecord(businessObject, diffList, dialogUserIdInformation, null, false);
-
         administrationProtocolEventService.createAndFireProtocolEvent(changeRecordBean);
 
-        return new MasterDataAdministrationOperationSuccessServiceResult("BANK_MESSAGES_CREATED");
+        final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
+            new MasterDataAdministrationOperationSuccessServiceResult("BANK_MESSAGES_CREATED");
+
+        for (final ValidationInformation information : validationInformations) {
+            serviceResult.addSubServiceResult(information);
+        }
+
+        return serviceResult;
     }
 
-
-    @Override
-    protected List<ValidationInformation> prepareForInsert(final Bank businessObject) {
-        return Collections.emptyList();
-    }
-
-
-    @Override
-    protected Optional<Bank> getBeanFromDatabaseForCreation(final Bank businessObject) {
-        return bankDao.findById(businessObject.getId());
-    }
-
-
-    @Override
-    protected List<ValidationInformation> validateForInsert(final Bank businessObject,
-        final DialogUserIdInformation dialogUserIdInformation) throws ConstraintViolationException {
-        return bankValidator.validate(businessObject, ValidationContext.createInsert());
-    }
 }
