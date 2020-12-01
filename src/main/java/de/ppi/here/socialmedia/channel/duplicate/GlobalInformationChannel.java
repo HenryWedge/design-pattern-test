@@ -16,7 +16,7 @@ import de.ppi.here.socialmedia.service.router.Router;
 import de.ppi.here.socialmedia.util.UserContext;
 
 @Service
-public class GlobalInformationChannel2 implements ChannelBo {
+public class GlobalInformationChannel implements ChannelBo {
 
     @Autowired
     private PostDao postDao;

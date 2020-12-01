@@ -10,28 +10,25 @@ import de.ppi.here.socialmedia.exception.ContentTooLongException;
 import de.ppi.here.socialmedia.exception.NoWriteAccessRightsException;
 import de.ppi.here.socialmedia.service.ContentLengthCheckStrategy;
 import de.ppi.here.socialmedia.service.FriendStatusUpdateService;
+import de.ppi.here.socialmedia.service.notification.BasicNotificationService;
 import de.ppi.here.socialmedia.service.notification.PushNotificationService;
 import de.ppi.here.socialmedia.service.router.Router;
 import de.ppi.here.socialmedia.util.UserContext;
 
 @Service
-public class PrivateChat2 implements ChannelBo {
+public class PrivateGroupChannel implements ChannelBo {
 
     @Autowired
     private PostDao postDao;
 
     @Autowired
-    private FriendStatusUpdateService friendStatusUpdateService;
-
-    @Autowired
-    private PushNotificationService pushNotificationService;
+    private BasicNotificationService basicNotificationService;
 
     @Autowired
     private ChannelAuthorizationDao channelAuthorizationDao;
 
     @Autowired
     private Router router;
-
 
     @Override
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
@@ -45,10 +42,8 @@ public class PrivateChat2 implements ChannelBo {
 
         postDao.save(post);
 
-        friendStatusUpdateService.increaseFriendStatus(5, channelId);
-
         router.route("message/sent");
 
-        pushNotificationService.notifySubscribersOfChannel(channelId);
+        basicNotificationService.notifySubscribersOfChannel(channelId);
     }
 }

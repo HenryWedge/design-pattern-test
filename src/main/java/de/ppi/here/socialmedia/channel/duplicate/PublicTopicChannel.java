@@ -9,17 +9,24 @@ import de.ppi.here.socialmedia.dao.PostDao;
 import de.ppi.here.socialmedia.exception.ContentTooLongException;
 import de.ppi.here.socialmedia.exception.NoWriteAccessRightsException;
 import de.ppi.here.socialmedia.service.ContentLengthCheckStrategy;
-import de.ppi.here.socialmedia.service.FriendStatusUpdateService;
+import de.ppi.here.socialmedia.service.InsultChecker;
+import de.ppi.here.socialmedia.service.InsultFilterService;
 import de.ppi.here.socialmedia.service.notification.BasicNotificationService;
-import de.ppi.here.socialmedia.service.notification.PushNotificationService;
 import de.ppi.here.socialmedia.service.router.Router;
 import de.ppi.here.socialmedia.util.UserContext;
 
+
 @Service
-public class PrivateGroupChannel2 implements ChannelBo {
+public class PublicTopicChannel implements ChannelBo {
 
     @Autowired
     private PostDao postDao;
+
+    @Autowired
+    private InsultFilterService insultFilterService;
+
+    @Autowired
+    private InsultChecker insultChecker;
 
     @Autowired
     private BasicNotificationService basicNotificationService;
@@ -40,10 +47,15 @@ public class PrivateGroupChannel2 implements ChannelBo {
 
         new ContentLengthCheckStrategy(2000).checkContentLength(post);
 
+        if (insultChecker.isContentIncludingInsult(post.getContent())) {
+            post.setContent(insultFilterService.filterInsult(post.getContent()));
+        }
+
         postDao.save(post);
 
         router.route("message/sent");
 
         basicNotificationService.notifySubscribersOfChannel(channelId);
     }
+
 }
