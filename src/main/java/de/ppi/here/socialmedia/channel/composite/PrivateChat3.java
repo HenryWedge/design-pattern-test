@@ -37,8 +37,13 @@ public class PrivateChat3 implements ChannelBo {
     @Override
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
         throws ContentTooLongException, NoWriteAccessRightsException, ContentContainsInsultException {
-        final ChannelContext channelContext = new ChannelContext(postDao, router, accessRightCheckStrategy,
-            new ContentLengthCheckStrategy(2000), pushNotificationService, post1 -> post1, friendStatusUpdater);
+        final ChannelContext channelContext = new ChannelContextBuilder(postDao, router)
+                .addAccessRightStrategy(accessRightCheckStrategy)
+                .addContentLengthCheckStrategy(new ContentLengthCheckStrategy(2000))
+                .addNotificationService(pushNotificationService)
+                .addFriendStatusUpdater(friendStatusUpdater)
+                .build();
+
         channelContext.postMessage(post, channelId, ctx);
     }
 }
