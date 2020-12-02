@@ -33,8 +33,13 @@ public class PrivateGroupChannel implements ChannelBo {
     @Override
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
             throws ContentTooLongException, NoWriteAccessRightsException, ContentContainsInsultException {
-        final ChannelContext channelContext = new ChannelContext(postDao, router, accessRightCheckStrategy,
-                new ContentLengthCheckStrategy(2000), basicNotificationService, post1 -> post1, id -> {});
+
+        final ChannelContext channelContext = new ChannelContextBuilder(postDao, router)
+                .addAccessRightStrategy(accessRightCheckStrategy)
+                .addContentLengthCheckStrategy(new ContentLengthCheckStrategy(2000))
+                .addNotificationService(basicNotificationService)
+                .build();
+
         channelContext.postMessage(post, channelId, ctx);
     }
 }

@@ -36,8 +36,15 @@ public class GlobalInformationChannel implements ChannelBo {
     @Override
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
         throws ContentTooLongException, NoWriteAccessRightsException, ContentContainsInsultException {
-        final ChannelContext channelContext = new ChannelContext(postDao, router, accessRightCheckService,
-            new ContentLengthCheckStrategy(4000), basicNotificationService, validationStrategy, id -> {});
+
+        final ChannelContext channelContext =
+                new ChannelContextBuilder(postDao, router)
+                        .addAccessRightStrategy(accessRightCheckService)
+                        .addContentLengthCheckStrategy(new ContentLengthCheckStrategy(4000))
+                        .addNotificationService(basicNotificationService)
+                        .addContentValidationStrategy(validationStrategy)
+                        .build();
+
         channelContext.postMessage(post, channelId, ctx);
     }
 }
