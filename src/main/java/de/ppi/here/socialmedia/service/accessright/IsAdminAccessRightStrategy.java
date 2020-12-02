@@ -11,7 +11,7 @@ public class IsAdminAccessRightStrategy implements AccessRightCheckStrategy {
     private RoleService roleService;
 
     @Override
-    public boolean checkAccessRights(final Integer channelId, final Integer userId) {
+    public boolean hasAccessRights(final Integer channelId, final Integer userId) {
         return roleService.isAdmin(userId);
     }
 }

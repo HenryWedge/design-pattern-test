@@ -11,7 +11,7 @@ public class AccessRightCheckStrategyImpl implements AccessRightCheckStrategy {
     private ChannelAuthorizationDao channelAuthorizationDao;
 
     @Override
-    public boolean checkAccessRights(final Integer channelId, final Integer userId) {
+    public boolean hasAccessRights(final Integer channelId, final Integer userId) {
         return channelAuthorizationDao.findAllWhereChannelIdAndUserId(channelId, userId).isEmpty();
     }
 }

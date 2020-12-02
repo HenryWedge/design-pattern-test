@@ -14,15 +14,15 @@ public class ChannelContextBuilder {
 
     private Router router;
 
-    private AccessRightCheckStrategy accessRightCheckService;
+    private AccessRightCheckStrategy accessRightCheckService = (channelId, userId) -> false;
 
-    private ContentLengthCheckStrategy contentLengthChecker;
+    private ContentLengthCheckStrategy contentLengthChecker = new ContentLengthCheckStrategy(0);
 
-    private NotificationService notificationService;
+    private NotificationService notificationService = channelId -> {};
 
-    private ContentValidationStrategy contentValidator;
+    private ContentValidationStrategy contentValidator = post -> post;
 
-    private FriendStatusUpdater friendStatusUpdater;
+    private FriendStatusUpdater friendStatusUpdater = id -> {};
 
     public ChannelContextBuilder(final PostDao postDao, final Router router) {
         this.postDao = postDao;
