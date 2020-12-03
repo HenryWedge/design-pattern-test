@@ -24,19 +24,16 @@ import de.ppi.here.tcu.validation.OperatorValidator;
 public class OperatorAdministrationService3 implements AdministrationService<Operator> {
 
     @Autowired
-    private OperatorValidator validator;
+    private OperatorValidator operatorValidator;
 
     @Autowired
-    private OperatorDao dao;
+    private OperatorDao operatorDao;
 
     @Autowired
     private OperatorInserter inserter;
 
     @Autowired
     private OperatorUppercasePreparationService preparationService;
-
-    @Autowired
-    private BasicInsertStrategy<Operator> basicInsertStrategy;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(final Operator businessObject,
@@ -47,7 +44,7 @@ public class OperatorAdministrationService3 implements AdministrationService<Ope
             preparationService.prepareInsert(businessObject);
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            basicInsertStrategy.insert(businessObject, dialogUserIdInformation, validator, dao, inserter);
+            new BasicInsertStrategy<>(operatorValidator, operatorDao, inserter).insert(businessObject, dialogUserIdInformation);
 
         for (ValidationInformation validationInformation : validationInformations) {
             serviceResult.addSubServiceResult(validationInformation);

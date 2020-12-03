@@ -18,6 +18,7 @@ import de.ppi.here.tcu.result.ValidationInformation;
 import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.MandatorValidator;
 
+
 /**
  * Service zum Einfügen einer Manstaten-Entität in die Datenbank
  */
@@ -39,9 +40,6 @@ public class MandatorAdministrationService3 implements AdministrationService<Man
     @Autowired
     private MandatorUppercasePreparationService mandatorUppercasePreparationService;
 
-    @Autowired
-    private BasicInsertStrategy<Mandator> basicInsertStrategy;
-
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(Mandator businessObject,
         DialogUserIdInformation dialogUserIdInformation)
@@ -51,8 +49,9 @@ public class MandatorAdministrationService3 implements AdministrationService<Man
             defaultMandatorCheckService.checkPrecondition(businessObject);
         validationInformations.addAll(mandatorUppercasePreparationService.prepareInsert(businessObject));
 
-        MasterDataAdministrationOperationSuccessServiceResult serviceResult = basicInsertStrategy
-            .insert(businessObject, dialogUserIdInformation, mandatorValidator, mandatorDao, inserter);
+        MasterDataAdministrationOperationSuccessServiceResult serviceResult =
+            new BasicInsertStrategy<>(mandatorValidator, mandatorDao, inserter).insert(businessObject,
+                dialogUserIdInformation);
 
         for (ValidationInformation validationInformation : validationInformations) {
             serviceResult.addSubServiceResult(validationInformation);

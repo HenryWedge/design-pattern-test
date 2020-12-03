@@ -4,9 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
+import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeDataIteratorImpl;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.inserter.BasicInserter;
+import de.ppi.here.tcu.composite.inserter.BasicInserterBuilder;
 import de.ppi.here.tcu.composite.inserter.Inserter;
 import de.ppi.here.tcu.dao.BankDao;
 import de.ppi.here.tcu.entity.Bank;
@@ -16,6 +17,7 @@ import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceRes
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
 import de.ppi.here.tcu.validation.BankValidator;
 import de.ppi.here.tcu.validation.ConstraintViolationException;
+
 
 /**
  * Service zum Einfügen einer Bank-Entität in die Datenbank
@@ -36,15 +38,22 @@ public class BankAdministrationService3 implements AdministrationService<Bank> {
     private BankDao bankDao;
 
     @Autowired
-    private BasicInsertStrategy<Bank> insertStrategy;
+    private ChangeDataIterator<Bank> changeDataIterator;
 
     @Override
     public MasterDataAdministrationOperationSuccessServiceResult insert(final Bank businessObject,
         final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
-        final Inserter<Bank> inserter =
-            new BasicInserter<>(changeDataProtocolService, administrationProtocolEventService, new BankDao(),
-                new ChangeDataIteratorImpl<>(), new Bank(), "BANK_MESSAGES_CREATED");
-        return insertStrategy.insert(businessObject, dialogUserIdInformation, bankValidator, bankDao, inserter);
+
+        final Inserter<Bank> inserter = new BasicInserterBuilder<Bank>()
+            .addAdministrationProtocolEventService(administrationProtocolEventService)
+            .addChangeRecordProtocolService(changeDataProtocolService)
+            .addChangeDataIterator(changeDataIterator)
+            .addDao(bankDao)
+            .addOriginalObject(new Bank())
+            .addResultMessage("BANK_MESSAGES_CREATED").build();
+
+        return new BasicInsertStrategy<>(bankValidator, bankDao, inserter).insert(businessObject,
+            dialogUserIdInformation);
     }
 }

@@ -1,7 +1,6 @@
 package de.ppi.here.tcu.adminservice.composite.strategy;
 
 import java.util.List;
-import org.springframework.stereotype.Component;
 import de.ppi.here.tcu.composite.inserter.Inserter;
 import de.ppi.here.tcu.dao.Dao;
 import de.ppi.here.tcu.entity.Entity;
@@ -13,12 +12,24 @@ import de.ppi.here.tcu.validation.ConstraintViolationException;
 import de.ppi.here.tcu.validation.ValidationContext;
 import de.ppi.here.tcu.validation.Validator;
 
-@Component
+
 public class BasicInsertStrategy<T extends Entity> {
 
+    final Validator<T> validator;
+
+    final Dao<T> dao;
+
+    final Inserter<T> inserter;
+
+    public BasicInsertStrategy(final Validator<T> validator, final Dao<T> dao, final Inserter<T> inserter) {
+        this.validator = validator;
+        this.dao = dao;
+        this.inserter = inserter;
+    }
+
     public MasterDataAdministrationOperationSuccessServiceResult insert(final T businessObject,
-        final DialogUserIdInformation dialogUserIdInformation, final Validator<T> validator, final Dao<T> dao,
-        final Inserter<T> inserter) throws DuplicateEntityException, ConstraintViolationException {
+        final DialogUserIdInformation dialogUserIdInformation)
+        throws DuplicateEntityException, ConstraintViolationException {
 
         final List<ValidationInformation> validationInformations =
             validator.validate(businessObject, ValidationContext.createInsert());
