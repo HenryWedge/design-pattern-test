@@ -13,7 +13,7 @@ import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
+import de.ppi.here.tcu.composite.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.MandatorDao;
 import de.ppi.here.tcu.entity.Mandator;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
@@ -90,8 +90,9 @@ public class MandatorAdministrationService implements AdministrationService<Mand
         validationInformations
             .addAll(mandatorValidator.validate(businessObject, ValidationContext.createMandatorInsert()));
 
-        mandatorDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if (mandatorDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final Mandator persistent = mandatorDao.makePersistent(businessObject);
 

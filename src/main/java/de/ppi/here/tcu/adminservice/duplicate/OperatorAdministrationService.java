@@ -11,7 +11,7 @@ import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
+import de.ppi.here.tcu.composite.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.OperatorDao;
 import de.ppi.here.tcu.entity.Operator;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
@@ -68,8 +68,9 @@ public class OperatorAdministrationService implements AdministrationService<Oper
         validationInformations
             .addAll(operatorValidator.validate(businessObject, ValidationContext.createInsert()));
 
-        operatorDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(operatorDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final Operator persistent = operatorDao.makePersistent(businessObject);
 

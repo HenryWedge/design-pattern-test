@@ -49,8 +49,9 @@ public class FtpServerAdministrationService implements AdministrationService<Ftp
         final List<ValidationInformation> validationInformations =
             validator.validate(businessObject, ValidationContext.createInsert());
 
-        ftpServerDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(ftpServerDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final FtpServer persistent = ftpServerDao.makePersistent(businessObject);
 

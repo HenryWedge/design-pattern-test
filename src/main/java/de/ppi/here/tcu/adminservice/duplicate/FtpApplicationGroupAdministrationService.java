@@ -49,8 +49,9 @@ public class FtpApplicationGroupAdministrationService implements AdministrationS
         final List<ValidationInformation> validationInformations =
             ftpApplicationGroupValidator.validate(businessObject, ValidationContext.createInsert());
 
-        ftpApplicationGroupDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(ftpApplicationGroupDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final FtpApplicationGroup persistent = ftpApplicationGroupDao.makePersistent(businessObject);
 
