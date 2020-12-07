@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import de.ppi.here.tcu.adminservice.AdministrationService;
 import de.ppi.here.tcu.entity.Entity;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
+import de.ppi.here.tcu.composite.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;
 import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceResult;
@@ -31,8 +31,9 @@ public abstract class AbstractInsertingMasterDataService<T extends Entity>
         validationInformations.addAll(prepareForInsert(businessObject));
         validationInformations.addAll(validateForInsert(businessObject, dialogUserIdInformation));
 
-        getBeanFromDatabaseForCreation(businessObject)
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(getBeanFromDatabaseForCreation(businessObject).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
             internalInsert(businessObject, dialogUserIdInformation);

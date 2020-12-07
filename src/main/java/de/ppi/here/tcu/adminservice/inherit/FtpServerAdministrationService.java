@@ -9,7 +9,7 @@ import de.ppi.here.tcu.changeData.ChangeData;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecord;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
+import de.ppi.here.tcu.composite.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.dao.FtpServerDao;
 import de.ppi.here.tcu.entity.FtpServer;
 import de.ppi.here.tcu.result.DialogUserIdInformation;

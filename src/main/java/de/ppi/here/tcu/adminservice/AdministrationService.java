@@ -1,6 +1,6 @@
 package de.ppi.here.tcu.adminservice;
 
-import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
+import de.ppi.here.tcu.composite.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.entity.Entity;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
 import de.ppi.here.tcu.result.DuplicateEntityException;

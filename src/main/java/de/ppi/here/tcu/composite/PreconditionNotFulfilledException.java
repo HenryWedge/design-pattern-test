@@ -1,4 +1,4 @@
-package de.ppi.here.tcu.composite.precondition;
+package de.ppi.here.tcu.composite;
 
 public class PreconditionNotFulfilledException extends Exception {
 
