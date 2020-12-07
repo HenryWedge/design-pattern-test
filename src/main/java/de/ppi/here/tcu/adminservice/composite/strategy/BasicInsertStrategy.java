@@ -34,7 +34,9 @@ public class BasicInsertStrategy<T extends Entity> {
         final List<ValidationInformation> validationInformations =
             validator.validate(businessObject, ValidationContext.createInsert());
 
-        dao.findById(businessObject.getId()).orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if (dao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
             inserter.insert(businessObject, dialogUserIdInformation);
