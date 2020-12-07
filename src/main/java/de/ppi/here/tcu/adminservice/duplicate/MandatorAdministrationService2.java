@@ -90,8 +90,9 @@ public class MandatorAdministrationService2 implements AdministrationService<Man
         validationInformations
             .addAll(mandatorValidator.validate(businessObject, ValidationContext.createMandatorInsert()));
 
-        mandatorDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if (mandatorDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final Mandator persistent = mandatorDao.makePersistent(businessObject);
 

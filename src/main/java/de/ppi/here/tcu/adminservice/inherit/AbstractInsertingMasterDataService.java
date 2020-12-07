@@ -31,8 +31,9 @@ public abstract class AbstractInsertingMasterDataService<T extends Entity>
         validationInformations.addAll(prepareForInsert(businessObject));
         validationInformations.addAll(validateForInsert(businessObject, dialogUserIdInformation));
 
-        getBeanFromDatabaseForCreation(businessObject)
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(getBeanFromDatabaseForCreation(businessObject).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
             internalInsert(businessObject, dialogUserIdInformation);

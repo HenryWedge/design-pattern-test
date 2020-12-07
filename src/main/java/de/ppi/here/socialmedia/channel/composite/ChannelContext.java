@@ -48,7 +48,7 @@ public class ChannelContext implements ChannelBo {
     public void postMessage(final Post post, final Integer channelId, final UserContext ctx)
         throws NoWriteAccessRightsException, ContentTooLongException, ContentContainsInsultException {
 
-        if (accessRightCheckService.checkAccessRights(channelId, ctx.getUserId())) {
+        if (!accessRightCheckService.hasAccessRights(channelId, ctx.getUserId())) {
             throw new NoWriteAccessRightsException();
         }
 

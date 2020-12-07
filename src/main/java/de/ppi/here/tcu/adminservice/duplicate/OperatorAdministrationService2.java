@@ -68,8 +68,9 @@ public class OperatorAdministrationService2 implements AdministrationService<Ope
         validationInformations
             .addAll(operatorValidator.validate(businessObject, ValidationContext.createInsert()));
 
-        operatorDao.findById(businessObject.getId())
-            .orElseThrow(() -> new DuplicateEntityException(businessObject));
+        if(operatorDao.findById(businessObject.getId()).isPresent()) {
+            throw new DuplicateEntityException(businessObject);
+        }
 
         final Operator persistent = operatorDao.makePersistent(businessObject);
 
