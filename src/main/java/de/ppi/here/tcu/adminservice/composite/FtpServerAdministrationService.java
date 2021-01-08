@@ -3,11 +3,11 @@ package de.ppi.here.tcu.adminservice.composite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
+import de.ppi.here.tcu.adminservice.composite.strategy.InsertContext;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.inserter.BasicInserter;
-import de.ppi.here.tcu.composite.inserter.BasicInserterBuilder;
+import de.ppi.here.tcu.composite.inserter.BasicInsertStrategy;
+import de.ppi.here.tcu.composite.inserter.InsertStrategyBuilder;
 import de.ppi.here.tcu.dao.FtpServerDao;
 import de.ppi.here.tcu.entity.FtpServer;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
@@ -44,8 +44,8 @@ public class FtpServerAdministrationService implements AdministrationService<Ftp
         final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
 
-        final BasicInserter<FtpServer> inserter =
-                new BasicInserterBuilder<FtpServer>()
+        final BasicInsertStrategy<FtpServer> inserter =
+                new InsertStrategyBuilder<FtpServer>()
                         .addAdministrationProtocolEventService(administrationProtocolEventService)
                         .addChangeRecordProtocolService(changeRecordProtocolService)
                         .addChangeDataIterator(changeDataIterator)
@@ -54,7 +54,7 @@ public class FtpServerAdministrationService implements AdministrationService<Ftp
                         .addResultMessage("FTPSERVER_MESSAGES_CREATED")
                         .build();
 
-        return new BasicInsertStrategy<>(ftpServerValidator, ftpServerDao, inserter)
+        return new InsertContext<>(ftpServerValidator, ftpServerDao, inserter)
                 .insert(businessObject, dialogUserIdInformation);
     }
 }

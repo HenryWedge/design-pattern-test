@@ -7,7 +7,7 @@ import de.ppi.here.tcu.entity.Entity;
 import de.ppi.here.tcu.service.AdministrationProtocolEventService;
 
 
-public class BasicInserterBuilder<T extends Entity> {
+public class InsertStrategyBuilder<T extends Entity> {
 
     private ChangeRecordProtocolService<T> changeRecordProtocolService;
 
@@ -21,46 +21,46 @@ public class BasicInserterBuilder<T extends Entity> {
 
     private String resultMessage;
 
-    public BasicInserterBuilder<T> addChangeRecordProtocolService(
+    public InsertStrategyBuilder<T> addChangeRecordProtocolService(
         ChangeRecordProtocolService<T> changeRecordProtocolService) {
         this.changeRecordProtocolService = changeRecordProtocolService;
         return this;
     }
 
 
-    public BasicInserterBuilder<T> addAdministrationProtocolEventService(
+    public InsertStrategyBuilder<T> addAdministrationProtocolEventService(
         AdministrationProtocolEventService administrationProtocolEventService) {
         this.administrationProtocolEventService = administrationProtocolEventService;
         return this;
     }
 
 
-    public BasicInserterBuilder<T> addDao(Dao<T> dao) {
+    public InsertStrategyBuilder<T> addDao(Dao<T> dao) {
         this.dao = dao;
         return this;
     }
 
 
-    public BasicInserterBuilder<T> addChangeDataIterator(ChangeDataIterator<T> changeDataIterator) {
+    public InsertStrategyBuilder<T> addChangeDataIterator(ChangeDataIterator<T> changeDataIterator) {
         this.changeDataIterator = changeDataIterator;
         return this;
     }
 
 
-    public BasicInserterBuilder<T> addOriginalObject(T originalObject) {
+    public InsertStrategyBuilder<T> addOriginalObject(T originalObject) {
         this.originalObject = originalObject;
         return this;
     }
 
 
-    public BasicInserterBuilder<T> addResultMessage(String resultMessage) {
+    public InsertStrategyBuilder<T> addResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
         return this;
     }
 
 
-    public BasicInserter<T> build() {
-        return new BasicInserter<>(changeRecordProtocolService, administrationProtocolEventService, dao,
+    public BasicInsertStrategy<T> build() {
+        return new BasicInsertStrategy<>(changeRecordProtocolService, administrationProtocolEventService, dao,
             changeDataIterator, originalObject, resultMessage);
     }
 

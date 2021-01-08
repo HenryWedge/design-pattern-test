@@ -10,14 +10,14 @@ import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceRes
 /**
  * Einfügeablauf für eine Ftp-Applikation
  */
-public class FtpApplicationInserter implements Inserter<FtpApplication> {
+public class FtpApplicationInsertStrategy implements InsertStrategy<FtpApplication> {
 
-    private BasicInserter<FtpApplication> basicInserter;
+    private BasicInsertStrategy<FtpApplication> basicInserter;
 
     private FtpApplicationGroupDao ftpApplicationGroupDao;
 
-    public FtpApplicationInserter(final BasicInserter<FtpApplication> basicInserter,
-        final FtpApplicationGroupDao ftpApplicationGroupDao) {
+    public FtpApplicationInsertStrategy(final BasicInsertStrategy<FtpApplication> basicInserter,
+                                        final FtpApplicationGroupDao ftpApplicationGroupDao) {
         this.basicInserter = basicInserter;
         this.ftpApplicationGroupDao = ftpApplicationGroupDao;
     }
