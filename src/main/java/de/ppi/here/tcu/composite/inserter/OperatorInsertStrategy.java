@@ -18,7 +18,7 @@ import de.ppi.here.tcu.service.OperatorInfrastructureService;
  * Einfüge-Ablauf für einen Betreiber
  */
 @Service
-public class OperatorInserter implements Inserter<Operator> {
+public class OperatorInsertStrategy implements InsertStrategy<Operator> {
 
     @Autowired
     private OperatorDao operatorDao;

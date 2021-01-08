@@ -4,8 +4,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
-import de.ppi.here.tcu.composite.inserter.OperatorInserter;
+import de.ppi.here.tcu.adminservice.composite.strategy.InsertContext;
+import de.ppi.here.tcu.composite.inserter.OperatorInsertStrategy;
 import de.ppi.here.tcu.composite.prepare.OperatorUppercasePreparationService;
 import de.ppi.here.tcu.dao.OperatorDao;
 import de.ppi.here.tcu.entity.Operator;
@@ -30,7 +30,7 @@ public class OperatorAdministrationService3 implements AdministrationService<Ope
     private OperatorDao operatorDao;
 
     @Autowired
-    private OperatorInserter inserter;
+    private OperatorInsertStrategy insertStrategy;
 
     @Autowired
     private OperatorUppercasePreparationService preparationService;
@@ -44,7 +44,7 @@ public class OperatorAdministrationService3 implements AdministrationService<Ope
             preparationService.prepareInsert(businessObject);
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            new BasicInsertStrategy<>(operatorValidator, operatorDao, inserter).insert(businessObject, dialogUserIdInformation);
+            new InsertContext<>(operatorValidator, operatorDao, insertStrategy).insert(businessObject, dialogUserIdInformation);
 
         for (ValidationInformation validationInformation : validationInformations) {
             serviceResult.addSubServiceResult(validationInformation);

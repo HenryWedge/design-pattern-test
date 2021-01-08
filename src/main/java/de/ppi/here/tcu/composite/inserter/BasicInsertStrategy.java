@@ -15,7 +15,7 @@ import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceRes
  * Standard-Einfüge-Ablauf
  * @param <T>
  */
-public class BasicInserter<T extends Entity> implements Inserter<T> {
+public class BasicInsertStrategy<T extends Entity> implements InsertStrategy<T> {
 
     private ChangeRecordProtocolService<T> changeRecordProtocolService;
 
@@ -29,9 +29,9 @@ public class BasicInserter<T extends Entity> implements Inserter<T> {
 
     private String resultMessage;
 
-    public BasicInserter(final ChangeRecordProtocolService<T> changeRecordProtocolService,
-        final AdministrationProtocolEventService administrationProtocolEventService, final Dao<T> dao,
-        final ChangeDataIterator<T> changeDataIterator, final T originalObject, final String resultMessage) {
+    public BasicInsertStrategy(final ChangeRecordProtocolService<T> changeRecordProtocolService,
+                               final AdministrationProtocolEventService administrationProtocolEventService, final Dao<T> dao,
+                               final ChangeDataIterator<T> changeDataIterator, final T originalObject, final String resultMessage) {
 
         this.changeRecordProtocolService = changeRecordProtocolService;
         this.administrationProtocolEventService = administrationProtocolEventService;

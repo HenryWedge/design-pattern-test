@@ -3,12 +3,11 @@ package de.ppi.here.tcu.adminservice.composite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
+import de.ppi.here.tcu.adminservice.composite.strategy.InsertContext;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
-import de.ppi.here.tcu.changeData.ChangeDataIteratorImpl;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.inserter.BasicInserterBuilder;
-import de.ppi.here.tcu.composite.inserter.Inserter;
+import de.ppi.here.tcu.composite.inserter.InsertStrategyBuilder;
+import de.ppi.here.tcu.composite.inserter.InsertStrategy;
 import de.ppi.here.tcu.dao.BankDao;
 import de.ppi.here.tcu.entity.Bank;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
@@ -45,7 +44,7 @@ public class BankAdministrationService3 implements AdministrationService<Bank> {
         final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
 
-        final Inserter<Bank> inserter = new BasicInserterBuilder<Bank>()
+        final InsertStrategy<Bank> insertStrategy = new InsertStrategyBuilder<Bank>()
             .addAdministrationProtocolEventService(administrationProtocolEventService)
             .addChangeRecordProtocolService(changeDataProtocolService)
             .addChangeDataIterator(changeDataIterator)
@@ -53,7 +52,7 @@ public class BankAdministrationService3 implements AdministrationService<Bank> {
             .addOriginalObject(new Bank())
             .addResultMessage("BANK_MESSAGES_CREATED").build();
 
-        return new BasicInsertStrategy<>(bankValidator, bankDao, inserter).insert(businessObject,
+        return new InsertContext<>(bankValidator, bankDao, insertStrategy).insert(businessObject,
             dialogUserIdInformation);
     }
 }

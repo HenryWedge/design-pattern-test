@@ -3,12 +3,12 @@ package de.ppi.here.tcu.adminservice.composite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
+import de.ppi.here.tcu.adminservice.composite.strategy.InsertContext;
 import de.ppi.here.tcu.changeData.ChangeDataIterator;
 import de.ppi.here.tcu.changeData.ChangeRecordProtocolService;
-import de.ppi.here.tcu.composite.inserter.BasicInserter;
-import de.ppi.here.tcu.composite.inserter.BasicInserterBuilder;
-import de.ppi.here.tcu.composite.inserter.FtpApplicationInserter;
+import de.ppi.here.tcu.composite.inserter.BasicInsertStrategy;
+import de.ppi.here.tcu.composite.inserter.InsertStrategyBuilder;
+import de.ppi.here.tcu.composite.inserter.FtpApplicationInsertStrategy;
 import de.ppi.here.tcu.dao.FtpApplicationDao;
 import de.ppi.here.tcu.dao.FtpApplicationGroupDao;
 import de.ppi.here.tcu.entity.FtpApplication;
@@ -49,7 +49,7 @@ public class FtpApplicationAdministrationService3 implements AdministrationServi
         final DialogUserIdInformation dialogUserIdInformation)
         throws DuplicateEntityException, ConstraintViolationException {
 
-        final BasicInserter<FtpApplication> inserter = new BasicInserterBuilder<FtpApplication>()
+        final BasicInsertStrategy<FtpApplication> inserter = new InsertStrategyBuilder<FtpApplication>()
             .addAdministrationProtocolEventService(administrationProtocolEventService)
             .addChangeRecordProtocolService(changeDataProtocolService)
             .addChangeDataIterator(changeDataIterator)
@@ -58,9 +58,9 @@ public class FtpApplicationAdministrationService3 implements AdministrationServi
             .addResultMessage("FTPAPPLICATION_MESSAGES_CREATED")
             .build();
 
-        final FtpApplicationInserter ftpInserter = new FtpApplicationInserter(inserter, ftpApplicationGroupDao);
+        final FtpApplicationInsertStrategy ftpInserter = new FtpApplicationInsertStrategy(inserter, ftpApplicationGroupDao);
 
-        return new BasicInsertStrategy<>(ftpApplicationValidator, ftpApplicationDao, ftpInserter).insert(
+        return new InsertContext<>(ftpApplicationValidator, ftpApplicationDao, ftpInserter).insert(
             businessObject, dialogUserIdInformation);
     }
 }

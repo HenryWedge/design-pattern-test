@@ -9,7 +9,7 @@ import de.ppi.here.tcu.result.MasterDataAdministrationOperationSuccessServiceRes
  * Einfüge-Ablauf
  * @param <T> Typ des einzufügenden Elements
  */
-public interface Inserter<T extends Entity> {
+public interface InsertStrategy<T extends Entity> {
 
     MasterDataAdministrationOperationSuccessServiceResult insert(T businessObject,
         DialogUserIdInformation dialogUserIdInformation) throws DuplicateEntityException;

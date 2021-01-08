@@ -22,7 +22,7 @@ import de.ppi.here.tcu.service.MandatorInfrastructureService;
  * Einfüge-Ablauf für einen Mandaten
  */
 @Service
-public class MandatorInserter implements Inserter<Mandator> {
+public class MandatorInsertStrategy implements InsertStrategy<Mandator> {
 
     @Autowired
     private MandatorDao mandatorDao;

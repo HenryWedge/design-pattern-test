@@ -1,7 +1,7 @@
 package de.ppi.here.tcu.adminservice.composite.strategy;
 
 import java.util.List;
-import de.ppi.here.tcu.composite.inserter.Inserter;
+import de.ppi.here.tcu.composite.inserter.InsertStrategy;
 import de.ppi.here.tcu.dao.Dao;
 import de.ppi.here.tcu.entity.Entity;
 import de.ppi.here.tcu.result.DialogUserIdInformation;
@@ -13,18 +13,18 @@ import de.ppi.here.tcu.validation.ValidationContext;
 import de.ppi.here.tcu.validation.Validator;
 
 
-public class BasicInsertStrategy<T extends Entity> {
+public class InsertContext<T extends Entity> {
 
     final Validator<T> validator;
 
     final Dao<T> dao;
 
-    final Inserter<T> inserter;
+    final InsertStrategy<T> insertStrategy;
 
-    public BasicInsertStrategy(final Validator<T> validator, final Dao<T> dao, final Inserter<T> inserter) {
+    public InsertContext(final Validator<T> validator, final Dao<T> dao, final InsertStrategy<T> insertStrategy) {
         this.validator = validator;
         this.dao = dao;
-        this.inserter = inserter;
+        this.insertStrategy = insertStrategy;
     }
 
     public MasterDataAdministrationOperationSuccessServiceResult insert(final T businessObject,
@@ -39,7 +39,7 @@ public class BasicInsertStrategy<T extends Entity> {
         }
 
         final MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            inserter.insert(businessObject, dialogUserIdInformation);
+            insertStrategy.insert(businessObject, dialogUserIdInformation);
 
         for (final ValidationInformation information : validationInformations) {
             serviceResult.addSubServiceResult(information);

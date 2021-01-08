@@ -4,8 +4,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import de.ppi.here.tcu.adminservice.AdministrationService;
-import de.ppi.here.tcu.adminservice.composite.strategy.BasicInsertStrategy;
-import de.ppi.here.tcu.composite.inserter.MandatorInserter;
+import de.ppi.here.tcu.adminservice.composite.strategy.InsertContext;
+import de.ppi.here.tcu.composite.inserter.MandatorInsertStrategy;
 import de.ppi.here.tcu.composite.precondition.DefaultMandatorCheckService;
 import de.ppi.here.tcu.composite.precondition.PreconditionNotFulfilledException;
 import de.ppi.here.tcu.composite.prepare.MandatorUppercasePreparationService;
@@ -26,7 +26,7 @@ import de.ppi.here.tcu.validation.MandatorValidator;
 public class MandatorAdministrationService3 implements AdministrationService<Mandator> {
 
     @Autowired
-    private MandatorInserter inserter;
+    private MandatorInsertStrategy insertStrategy;
 
     @Autowired
     private MandatorDao mandatorDao;
@@ -50,7 +50,7 @@ public class MandatorAdministrationService3 implements AdministrationService<Man
         validationInformations.addAll(mandatorUppercasePreparationService.prepareInsert(businessObject));
 
         MasterDataAdministrationOperationSuccessServiceResult serviceResult =
-            new BasicInsertStrategy<>(mandatorValidator, mandatorDao, inserter).insert(businessObject,
+            new InsertContext<>(mandatorValidator, mandatorDao, insertStrategy).insert(businessObject,
                 dialogUserIdInformation);
 
         for (ValidationInformation validationInformation : validationInformations) {
